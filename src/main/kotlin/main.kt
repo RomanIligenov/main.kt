@@ -1,4 +1,5 @@
 import jetbrains.letsPlot.export.ggsave
+import jetbrains.letsPlot.geom.geomLine
 import jetbrains.letsPlot.geom.geomPoint
 import jetbrains.letsPlot.letsPlot
 import kotlin.collections.ArrayList
@@ -9,218 +10,70 @@ fun main() {
 
     val m: Int = 1000 // число испытаний
     val n: Int = 100000 // число точек
-    val number: Int = 4 // номер картинки
-    var W: ArrayList<Double> = ArrayList(m)
-    for (i in 0 until m){
-        W.add(probaD4(n,12345 + i ))
+    var V: ArrayList<Double> = ArrayList(10)
+    var D: ArrayList<Double> = ArrayList(10)
+    for (j in 1 until 11) { // номер картинки
+        var W: ArrayList<Double> = ArrayList(m)
+        for (i in 0 until m) {
+            W.add(probaD10(n, seed(i), j))
+        }
+        V.add(middle(m, W))
+        D.add(j.toDouble())
     }
-    plot (P(m, W), SoftW(m, W), number)
-    println (middle(m, W))
+    plot(D, V, 77)
 }
 
 fun gener (n: Int, seed: Int): ArrayList<Double> { //генерация массива(разный сид - разный массив)
     val gen = Random (seed)
     var x1: ArrayList<Double> = ArrayList(n)
     for (i in 0 until n) {
-        x1.add((gen.nextDouble(-1.0, 1.0)))// изменить не от 0, а от -1 до 1
+        x1.add((gen.nextDouble(-1.0, 1.0)))//  от -1 до 1
     }
     return x1
 }
-fun probaD1 (n: Int, seed: Int): Double{ // перебор точек и подсчет тех, что в шаре
-    val t1 = gener(n, seed)
-    var k: Double = 0.0
-    var s: Double = 0.0
-    var r: Double = 0.0
-    for (i in 0 until n) { // `1..n` is a Range
-        r = (t1[i]*t1[i]).pow(0.5)
-        if (r < 1){
-            k += 1
-        }
-    }
-    n.toDouble()
 
-    s = 2*k/n
-    return s
-}
-fun probaD2 (n: Int, seed: Int): Double{ // перебор точек и подсчет тех, что в шаре
-    val t1 = gener(n, seed)
-    val t2 = gener(n, seed+1)
-    var k: Double = 0.0
-    var s: Double = 0.0
-    var r: Double = 0.0
-    for (i in 0 until n) { // `1..n` is a Range
-        r = (t1[i]*t1[i] + t2[i]*t2[i]).pow(0.5)
-       if (r < 1){
-           k += 1
-       }
+
+fun seed (i:Int):  ArrayList<Int> {
+    val g = Random (i)
+    val se:ArrayList<Int> = ArrayList(10)
+    for (i in 0 until 10) {
+        se.add((g.nextInt()))
     }
-    n.toDouble()
-    s = 4*k/n
-    return s
+    return se
 }
-fun probaD3 (n: Int, seed: Int): Double{ // перебор точек и подсчет тех, что в шаре
-    val t1 = gener(n, seed)
-    val t2 = gener(n, seed+1)
-    val t3 = gener(n, seed + 2)
+
+fun probaD10 (n: Int, se: ArrayList<Int>, D:Int): Double{ // перебор точек и подсчет тех, что в шаре
+    val t1 = gener(n, se[0])
+    val t2 = gener(n, se[1])
+    val t3 = gener(n, se[2])
+    val t4 = gener(n, se[3])
+    val t5 = gener(n, se[4])
+    val t6 = gener(n, se[5])
+    val t7 = gener(n, se[6])
+    val t8 = gener(n, se[7])
+    val t9 = gener(n, se[8])
+    val t10 = gener(n, se[9])
     var k: Double = 0.0
     var s: Double = 0.0
     var r: Double = 0.0
-    for (i in 0 until n) { // `1..n` is a Range
-        r = (t1[i]*t1[i] + t2[i]*t2[i] + t3[i]*t3[i]).pow(0.5)
-        if (r < 1){
-            k += 1
+    var d:ArrayList<Int> = ArrayList(10)
+    for (i in 0 until D){
+        d.add(1)
+    }
+    if (D<10){
+        for (i in D until 10){
+            d.add(0)
         }
     }
-    n.toDouble()
-    s = 8*k/n
-    return s
-}
-fun probaD4 (n: Int, seed: Int): Double{ // перебор точек и подсчет тех, что в шаре
-    val t1 = gener(n, seed)
-    val t2 = gener(n, seed+1)
-    val t3 = gener(n, seed + 2)
-    val t4 = gener(n, seed + 3)
-    var k: Double = 0.0
-    var s: Double = 0.0
-    var r: Double = 0.0
     for (i in 0 until n) { // `1..n` is a Range
-        r = (t1[i]*t1[i] + t2[i]*t2[i] + t3[i]*t3[i] + t4[i]*t4[i]).pow(0.5)
-        if (r < 1){
-            k += 1
-        }
-    }
-    n.toDouble()
-    s = 16*k/n
-    return s
-}
-fun probaD5 (n: Int, seed: Int): Double{ // перебор точек и подсчет тех, что в шаре
-    val t1 = gener(n, seed)
-    val t2 = gener(n, seed+1)
-    val t3 = gener(n, seed + 2)
-    val t4 = gener(n, seed + 3)
-    val t5 = gener(n, seed + 4)
-    var k: Double = 0.0
-    var s: Double = 0.0
-    var r: Double = 0.0
-    for (i in 0 until n) { // `1..n` is a Range
-        r = (t1[i]*t1[i] + t2[i]*t2[i] + t3[i]*t3[i] + t4[i]*t4[i] + t5[i]*t5[i]).pow(0.5)
-        if (r < 1){
-            k += 1
-        }
-    }
-    n.toDouble()
-    s = 32*k/n
-    return s
-}
-fun probaD6 (n: Int, seed: Int): Double{ // перебор точек и подсчет тех, что в шаре
-    val t1 = gener(n, seed)
-    val t2 = gener(n, seed + 1)
-    val t3 = gener(n, seed + 2)
-    val t4 = gener(n, seed + 3)
-    val t5 = gener(n, seed + 4)
-    val t6 = gener(n, seed + 5)
-    var k: Double = 0.0
-    var s: Double = 0.0
-    var r: Double = 0.0
-    for (i in 0 until n) { // `1..n` is a Range
-        r = (t1[i]*t1[i] + t2[i]*t2[i] + t3[i]*t3[i] + t4[i]*t4[i] + t5[i]*t5[i] + t6[i]*t6[i]).pow(0.5)
-        if (r < 1){
-            k += 1
-        }
-    }
-    n.toDouble()
-    s = 64*k/n
-    return s
-}
-fun probaD7 (n: Int, seed: Int): Double{ // перебор точек и подсчет тех, что в шаре
-    val t1 = gener(n, seed)
-    val t2 = gener(n, seed + 1)
-    val t3 = gener(n, seed + 2)
-    val t4 = gener(n, seed + 3)
-    val t5 = gener(n, seed + 4)
-    val t6 = gener(n, seed + 5)
-    val t7 = gener(n, seed + 6)
-    var k: Double = 0.0
-    var s: Double = 0.0
-    var r: Double = 0.0
-    for (i in 0 until n) { // `1..n` is a Range
-        r = (t1[i]*t1[i] + t2[i]*t2[i] + t3[i]*t3[i] + t4[i]*t4[i] + t5[i]*t5[i] + t6[i]*t6[i] + t7[i]*t7[i]).pow(0.5)
-        if (r < 1){
-            k += 1
-        }
-    }
-    n.toDouble()
-    s = 128*k/n
-    return s
-}
-fun probaD8 (n: Int, seed: Int): Double{ // перебор точек и подсчет тех, что в шаре
-    val t1 = gener(n, seed)
-    val t2 = gener(n, seed + 1)
-    val t3 = gener(n, seed + 2)
-    val t4 = gener(n, seed + 3)
-    val t5 = gener(n, seed + 4)
-    val t6 = gener(n, seed + 5)
-    val t7 = gener(n, seed + 6)
-    val t8 = gener(n, seed + 7)
-    var k: Double = 0.0
-    var s: Double = 0.0
-    var r: Double = 0.0
-    for (i in 0 until n) { // `1..n` is a Range
-        r = (t1[i]*t1[i] + t2[i]*t2[i] + t3[i]*t3[i] + t4[i]*t4[i] + t5[i]*t5[i] + t6[i]*t6[i] + t7[i]*t7[i] + t8[i]*t8[i]).pow(0.5)
-        if (r < 1){
-            k += 1
-        }
-    }
-    n.toDouble()
-    s = 256*k/n
-    return s
-}
-fun probaD9 (n: Int, seed: Int): Double{ // перебор точек и подсчет тех, что в шаре
-    val t1 = gener(n, seed)
-    val t2 = gener(n, seed + 1)
-    val t3 = gener(n, seed + 2)
-    val t4 = gener(n, seed + 3)
-    val t5 = gener(n, seed + 4)
-    val t6 = gener(n, seed + 5)
-    val t7 = gener(n, seed + 6)
-    val t8 = gener(n, seed + 7)
-    val t9 = gener(n, seed + 8)
-    var k: Double = 0.0
-    var s: Double = 0.0
-    var r: Double = 0.0
-    for (i in 0 until n) { // `1..n` is a Range
-        r = (t1[i]*t1[i] + t2[i]*t2[i] + t3[i]*t3[i] + t4[i]*t4[i] + t5[i]*t5[i] + t6[i]*t6[i] + t7[i]*t7[i] + t8[i]*t8[i] + t9[i]*t9[i]).pow(0.5)
-        if (r < 1){
-            k += 1
-        }
-    }
-    n.toDouble()
-    s = 512*k/n
-    return s
-}
-fun probaD10 (n: Int, seed: Int): Double{ // перебор точек и подсчет тех, что в шаре
-    val t1 = gener(n, seed)
-    val t2 = gener(n, seed + 1)
-    val t3 = gener(n, seed + 2)
-    val t4 = gener(n, seed + 3)
-    val t5 = gener(n, seed + 4)
-    val t6 = gener(n, seed + 5)
-    val t7 = gener(n, seed + 6)
-    val t8 = gener(n, seed + 7)
-    val t9 = gener(n, seed + 8)
-    val t10 = gener(n, seed + 9)
-    var k: Double = 0.0
-    var s: Double = 0.0
-    var r: Double = 0.0
-    for (i in 0 until n) { // `1..n` is a Range
-        r = (t1[i]*t1[i] + t2[i]*t2[i] + t3[i]*t3[i] + t4[i]*t4[i] + t5[i]*t5[i] + t6[i]*t6[i] + t7[i]*t7[i] + t8[i]*t8[i] + t9[i]*t9[i] + t10[i]*t10[i]).pow(0.5)
+        r = (t1[i]*t1[i]*d[0] + t2[i]*t2[i]*d[1] + t3[i]*t3[i]*d[2] + t4[i]*t4[i]*d[3] + d[4]*t5[i]*t5[i] + d[5]*t6[i]*t6[i] + d[6]*t7[i]*t7[i] + d[7]*t8[i]*t8[i] + d[8]*t9[i]*t9[i] + d[9]*t10[i]*t10[i]).pow(0.5)
         if (r < 1){
             k += 1
         }
     }
 
     n.toDouble()
-    s = 1024*k/n
+    s = 2.0.pow(D)*k/n
     return s
 }
 
@@ -260,12 +113,12 @@ fun P ( m: Int, W:ArrayList<Double>): ArrayList<Int> { // будем счита�
     return Pv
 }
 
-fun plot (P:ArrayList<Int>, Ws:ArrayList<Double>, number:Int){
-    val data = mapOf<String, Any>("x" to Ws, "y" to P)
+fun plot (X:ArrayList<Double>, Y:ArrayList<Double>, number:Int){
+    val data = mapOf<String, Any>("x" to X, "y" to Y)
     val fig_1 = letsPlot(data) +
             geomPoint( color = "dark-green"
                 , size = 1.0
-            ) { x = "x"; y = "y" }
+            ) + geomLine(color = "dark-green") { x = "x"; y = "y" }
     ggsave(fig_1, "plot_$number.png")
 }
 
