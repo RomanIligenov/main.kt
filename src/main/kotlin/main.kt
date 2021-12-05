@@ -8,11 +8,17 @@ import kotlin.math.*
 
 fun main() {
 
+    val V2:Double = 3.14159265
+    task1() // строим V(D)
+    task2(V2) // показываем что сигма для D = 2 обратно пропорционально корню из числа точек
+}
+
+fun task1 ():Double{
     val m: Int = 1000 // число испытаний
     val n: Int = 100000 // число точек
     var V: ArrayList<Double> = ArrayList(10)
     var D: ArrayList<Double> = ArrayList(10)
-    for (j in 1 until 11) { // номер картинки
+    for (j in 1 until 11) {
         var W: ArrayList<Double> = ArrayList(m)
         for (i in 0 until m) {
             W.add(probaD10(n, seed(i), j))
@@ -21,8 +27,24 @@ fun main() {
         D.add(j.toDouble())
     }
     plot(D, V, 77)
+    return V[2] // вернем среднее для D = 2
 }
+fun task2 (V2:Double){
+    var n:Int = 100
+    val m:Int = 1000
+    var sigma: ArrayList<Double> = ArrayList(10) // сигма
+    var N: ArrayList<Double> = ArrayList(10) // количество точек
+    for (i in 0 until n){
+            var W: ArrayList<Double> = ArrayList(m)
+            for (j in 0 until m) {
+                W.add((probaD10((i+1)*n, seed(j), 2)-V2).pow(2.0))
+            }
+            sigma.add(middle(m,W).pow(0.5))
+            N.add((n*i).toDouble())
+    }
 
+    plot(N,sigma,88)
+}
 fun gener (n: Int, seed: Int): ArrayList<Double> { //генерация массива(разный сид - разный массив)
     val gen = Random (seed)
     var x1: ArrayList<Double> = ArrayList(n)
@@ -98,7 +120,9 @@ fun SoftW (m:Int, W:ArrayList<Double>):ArrayList<Double> { // сортировк
     }
     return W_soft
 }
-fun P ( m: Int, W:ArrayList<Double>): ArrayList<Int> { // будем считать сколько вероятность
+fun P ( m: Int, W:ArrayList<Double>): ArrayList<Int> { /*будем считать сколько вероятность
+                                      Думал сначала использовать вероятности, но через среднее арифметическое
+                                      тоже все хорошо*/
     var W_soft: ArrayList<Double> = SoftW(m, W)
     val l: Int = W_soft.size
     var Pv: ArrayList<Int> = ArrayList(l)
